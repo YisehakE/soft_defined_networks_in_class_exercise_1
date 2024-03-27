@@ -55,6 +55,23 @@ parser MyParser(packet_in packet,
         /* TODO: add parser logic */
         transition accept;
     }
+
+
+    state parse_ethernet {
+      parse.extract(hdr.ethernet);
+
+      transition select (hdr.ethernet.etherType) {
+        0x800: parse_ipv4;
+        default: accept;
+      }
+    }
+
+
+    state parse_ipv4 {
+      parse.extract(hdr.ipv4);
+      default: accept;
+    }
+    
 }
 
 
