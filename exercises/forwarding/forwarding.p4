@@ -52,26 +52,21 @@ parser MyParser(packet_in packet,
                 inout standard_metadata_t standard_metadata) {
 
     state start {
-        /* TODO: add parser logic */
-        transition accept;
+        transition parse_ethernet;
     }
-
 
     state parse_ethernet {
-      parse.extract(hdr.ethernet);
-
-      transition select (hdr.ethernet.etherType) {
-        0x800: parse_ipv4;
-        default: accept;
-      }
+        packet.extract(hdr.ethernet);
+        transition select(hdr.ethernet.etherType) {
+            TYPE_IPV4: parse_ipv4;
+            default: accept;
+        }
     }
-
 
     state parse_ipv4 {
-      parse.extract(hdr.ipv4);
-      default: accept;
+        packet.extract(hdr.ipv4);
+        transition accept;
     }
-    
 }
 
 
@@ -99,9 +94,9 @@ control MyIngress(inout headers hdr,
         /* TODO: fill out code in action body */
     }
 
-    table ipv4_lpm {
+    table ipv4_exact {
         key = {
-            hdr.ipv4.dstAddr: lpm;
+            hdr.ipv4.dstAddr: exact;
         }
         actions = {
             ipv4_forward;
@@ -114,9 +109,9 @@ control MyIngress(inout headers hdr,
 
     apply {
         /* TODO: fix ingress control logic
-         *  - ipv4_lpm should be applied only when IPv4 header is valid
+         *  - ipv4_exact should be applied only when IPv4 header is valid
          */
-        ipv4_lpm.apply();
+        ipv4_exact.apply();
     }
 }
 
