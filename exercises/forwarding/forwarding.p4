@@ -111,6 +111,12 @@ control MyIngress(inout headers hdr,
         default_action = NoAction();
     }
 
+    action swap_mac(inout bit<48> src, inout bit<48> dst) {
+      bit<48> tmp = dst;
+      src = dst;
+      dst = tmp;
+    }
+
     apply {
         /* TODO: fix ingress control logic
          *  - ipv4_exact should be applied only when IPv4 header is valid
@@ -119,6 +125,9 @@ control MyIngress(inout headers hdr,
         if (hdr.ipv4.isValid()) {
           ipv4_exact.apply();
         }
+
+        // swap_mac(hdr.ethernet.srcAddr, hdr.ethernet.dstAddr);
+        // standard_metadata.egress_spec = standard_metadata.ingress;
     }
 }
 
