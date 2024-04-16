@@ -103,7 +103,7 @@ parser MyParser(packet_in packet,
     */
 
     state parse_filter {
-      parse.extract(hdr.filter);
+      packet.extract(hdr.filter);
 
       transition select(hdr.filter.proto) {
         PROTO_UDP: parse_udp;
@@ -112,7 +112,7 @@ parser MyParser(packet_in packet,
     }
 
     state parse_udp {
-      parse.extract(hdr.udp);
+      packet.extract(hdr.udp);
       transition accept;
     
     }
@@ -196,11 +196,12 @@ control MyIngress(inout headers hdr,
                      have been parsed. If yes, apply
                      the filter table
             */
-            ipv4_exact.apply(); // MY TODO: see if I should validate beforehand as well!
 
             if (hdr.filter.isValid() && hdr.udp.isValid()) {
                 filter_exact.apply();
-        }
+            }
+
+           ipv4_exact.apply(); // MY TODO: see if I should validate beforehand as well!
 
         }
     }
