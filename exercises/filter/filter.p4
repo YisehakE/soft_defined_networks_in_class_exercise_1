@@ -156,7 +156,7 @@ control MyIngress(inout headers hdr,
       
       actions = { 
         set_susp;
-        drop; // MY TODO: see if this is necessary
+        // drop; // MY TODO: see if this is necessary
         NoAction;
       }
 
