@@ -138,16 +138,16 @@ control MyIngress(inout headers hdr,
     /* TODO: define an action to set the
              susp field in the filter header
     */      
-
     action set_susp() {
       hdr.filter.susp = 1;
     }
+
+
     /* TODO: define a table that matches on
              source IP address and UDP source
              port, and applies the above actions
              as an option
     */
-
     table filter_exact {
       key = {
         hdr.ipv4.srcAddr: exact;
@@ -157,10 +157,11 @@ control MyIngress(inout headers hdr,
       actions = { 
         set_susp;
         drop; // MY TODO: see if this is necessary
+        NoAction;
       }
 
       size = 1024; // MY TODO: determine how big the filter table should be in bytes!
-      default_action = drop(); // MY TODO: see if this is necessary
+      default_action = NoAction(); // MY TODO: see if this is necessary
 
     }
 
