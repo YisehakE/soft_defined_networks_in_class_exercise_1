@@ -109,7 +109,28 @@ def writeFilterRule(p4info_helper, sw, src_ip_addr, src_port):
     #       match what is specified in the P4 
     #       program.
     
+    """
+    :param p4info_helper: the P4Info helper
+    :param sw: the switch connection
+    :param dst_ip_addr: the destination IP to match
+    :param dst_eth_addr: the destination Ethernet address to write in the packet
+    :param port: the port to forward the packet out of 
+    """
+    table_entry = p4info_helper.buildTableEntry(
+        table_name="MyIngress.filter_exact",
+        match_fields={
+            "hdr.ipv4.srcAddr": (src_ip_addr),
+            "hdr.udp.srcPort": (src_port)
+        },
+        action_name="MyIngress.set_susp",
+        action_params={}
+    )
+    
+    sw.WriteTableEntry(table_entry)
+
     print("Installed filter rule for (%s, %d) on %s" % (src_ip_addr, src_port, sw.name))
+
+
 
 def writeAllFilterRules(p4info_helper, sw_list):
     
